@@ -1,0 +1,135 @@
+.checkout-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.checkout-card {
+    background: white;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+}
+
+.checkout-card h2 {
+    text-align: center;
+    color: #667eea;
+    margin-top: 0;
+    font-size: 28px;
+}
+
+.checkout-card.success {
+    text-align: center;
+}
+
+.success-icon {
+    font-size: 60px;
+    margin: 20px 0;
+}
+
+.checkout-card.success h2 {
+    color: #4caf50;
+    margin-bottom: 20px;
+}
+
+.checkout-card.success p {
+    font-size: 16px;
+    color: #666;
+    margin: 10px 0;
+}
+
+.checkout-card.success .amount {
+    font-size: 24px;
+    font-weight: bold;
+    color: #667eea;
+    margin: 20px 0;
+}
+
+.checkout-card.success .message {
+    font-size: 14px;
+    color: #999;
+    font-style: italic;
+}
+
+.order-summary {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.order-summary h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 24px;
+}
+
+.order-summary .info {
+    margin: 0;
+    color: #999;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.card-element-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background: #fafafa;
+}
+
+.pay-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: opacity 0.3s;
+}
+
+.pay-btn:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.pay-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.back-btn {
+    width: 100%;
+    background: #ddd;
+    color: #333;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: #ccc;
+}
+
+.error {
+    background: #fee;
+    color: #c33;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    border-left: 4px solid #c33;
+}

@@ -1,84 +1,76 @@
-import { useState } from 'react';
-import '../styles/Auth.css';
+import { useState } from 'react'
+import axios from 'axios'
+import '../styles/Auth.css'
 
-export default function Register({ switchToLogin }) {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+function Register({ onSuccess, onSwitchToLogin }) {
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        setError('');
-        setLoading(true);
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setError('')
+        setLoading(true)
 
         try {
-            const response = await fetch('http://localhost:8080/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password }),
-            });
+            await axios.post('http://localhost:8080/api/auth/register', {
+                name,
+                email,
+                password
+            })
 
-            const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data));
-                window.location.reload();
-            } else {
-                setError(data.message || 'Registration failed');
-            }
+            alert('Registration successful! Please login.')
+            onSuccess()
         } catch (err) {
-            setError('Connection error. Make sure backend is running.');
+            setError(err.response?.data?.message || 'Registration failed')
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <h1>VOLTA</h1>
-                <p className="subtitle">Create Account</p>
-
-                <form onSubmit={handleRegister}>
+        <div className="form-container">
+            <h2>Register</h2>
+            {error && <div className="error">{error}</div>}
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label>Name</label>
                     <input
                         type="text"
-                        placeholder="Full Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
                     />
+                </div>
+                <div className="form-group">
+                    <label>Email</label>
                     <input
                         type="email"
-                        placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
+                </div>
+                <div className="form-group">
+                    <label>Password</label>
                     <input
                         type="password"
-                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-
-                    {error && <div className="error">{error}</div>}
-
-                    <button type="submit" disabled={loading}>
-                        {loading ? 'Creating Account...' : 'Register'}
-                    </button>
-                </form>
-
-                <p className="switch-text">
-                    Already have an account?{' '}
-                    <button type="button" onClick={switchToLogin}>
-                        Login here
-                    </button>
-                </p>
+                </div>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Registering...' : 'Register'}
+                </button>
+            </form>
+            <div className="switch-link">
+                Already have an account? <a onClick={onSwitchToLogin}>Login here</a>
             </div>
         </div>
-    );
+    )
 }
+
+export default Register
