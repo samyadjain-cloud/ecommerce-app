@@ -1,49 +1,67 @@
 package com.ecommerce.backend.service;
 
-import com.ecommerce.backend.dto.AuthDTO.*;
+import com.ecommerce.backend.dto.AuthDTO;
 import com.ecommerce.backend.model.User;
-import com.ecommerce.backend.model.User.Role;
 import com.ecommerce.backend.repository.UserRepository;
 import com.ecommerce.backend.security.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final AuthenticationManager authManager;
 
-    public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already in use");
-        }
-        User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
-        userRepository.save(user);
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token, user.getName(), user.getEmail(), user.getRole().name());
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
-    public AuthResponse login(LoginRequest request) {
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(), request.getPassword()
-                )
-        );
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public AuthDTO.AuthResponse register(AuthDTO.RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(User.Role.USER);
+
+        userRepository.save(user);
+
         String token = jwtService.generateToken(user);
-        return new AuthResponse(token, user.getName(), user.getEmail(), user.getRole().name());
+
+        AuthDTO.AuthResponse response = new AuthDTO.AuthResponse();
+        response.setToken(token);
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        return response;
+    }
+
+    public AuthDTO.AuthResponse login(AuthDTO.LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
+        String token = jwtService.generateToken(user);
+
+        AuthDTO.AuthResponse response = new AuthDTO.AuthResponse();
+        response.setToken(token);
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        return response;
     }
 }
