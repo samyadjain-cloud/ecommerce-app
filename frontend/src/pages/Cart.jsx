@@ -34,7 +34,7 @@ function Cart({ switchToProducts }) {
     const removeFromCart = async (cartItemId) => {
         try {
             const token = localStorage.getItem('token')
-            await axios.delete(`http://localhost:8080/api/cart/${cartItemId}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/cart/${cartItemId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             fetchCart()

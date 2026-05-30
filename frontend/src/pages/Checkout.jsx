@@ -28,7 +28,7 @@ function CheckoutForm({ total, switchToCart, switchToProducts }) {
 
         try {
             // Step 1: Create payment intent on backend
-            const intentResponse = await fetch('http://localhost:8080/api/payment/create-intent', {
+            const intentResponse = await fetch('${import.meta.env.VITE_API_URL}/api/payment/create-intent', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

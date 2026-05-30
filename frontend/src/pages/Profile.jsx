@@ -17,7 +17,7 @@ function Profile({ switchToProducts }) {
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem('token')
-            const response = await axios.get('http://localhost:8080/api/profile', {
+            const response = await axios.get('${import.meta.env.VITE_API_URL}/api/profile', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setProfile(response.data)

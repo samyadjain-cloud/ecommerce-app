@@ -13,7 +13,7 @@ function Products({ switchToCart, setCartTotal }) {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/products')
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`)
             setProducts(response.data)
         } catch (err) {
             setError('Failed to load products')
